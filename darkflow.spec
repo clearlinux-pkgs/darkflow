@@ -4,7 +4,7 @@
 #
 Name     : darkflow
 Version  : master
-Release  : 6
+Release  : 7
 URL      : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Source0  : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Summary  : No detailed summary available
@@ -59,14 +59,20 @@ python3 components for the darkflow package.
 
 %prep
 %setup -q -n darkflow-master
+cd %{_builddir}/darkflow-master
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1553014987
-export LDFLAGS="${LDFLAGS} -fno-lto"
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1582915768
+# -Werror is for werrorists
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -fno-lto "
+export FCFLAGS="$CFLAGS -fno-lto "
+export FFLAGS="$CFLAGS -fno-lto "
+export CXXFLAGS="$CXXFLAGS -fno-lto "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 setup.py build
 
@@ -74,7 +80,7 @@ python3 setup.py build
 export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/darkflow
-cp LICENSE %{buildroot}/usr/share/package-licenses/darkflow/LICENSE
+cp %{_builddir}/darkflow-master/LICENSE %{buildroot}/usr/share/package-licenses/darkflow/12d81f50767d4e09aa7877da077ad9d1b915d75b
 python3 -tt setup.py build  install --root=%{buildroot}
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
@@ -89,7 +95,7 @@ echo ----[ mark ]----
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/darkflow/LICENSE
+/usr/share/package-licenses/darkflow/12d81f50767d4e09aa7877da077ad9d1b915d75b
 
 %files python
 %defattr(-,root,root,-)
