@@ -4,7 +4,7 @@
 #
 Name     : darkflow
 Version  : master
-Release  : 10
+Release  : 11
 URL      : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Source0  : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Summary  : No detailed summary available
