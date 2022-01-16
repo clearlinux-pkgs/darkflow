@@ -4,7 +4,7 @@
 #
 Name     : darkflow
 Version  : master
-Release  : 22
+Release  : 23
 URL      : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Source0  : https://github.com/thtrieu/darkflow/archive/master.tar.gz
 Summary  : No detailed summary available
@@ -14,9 +14,9 @@ Requires: darkflow-bin = %{version}-%{release}
 Requires: darkflow-license = %{version}-%{release}
 Requires: darkflow-python = %{version}-%{release}
 Requires: darkflow-python3 = %{version}-%{release}
-BuildRequires : Cython-python3
 BuildRequires : buildreq-distutils3
 BuildRequires : numpy
+BuildRequires : pypi-cython-python3
 
 %description
 ## Intro
@@ -66,7 +66,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1635721380
+export SOURCE_DATE_EPOCH=1642357801
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$FFLAGS -fno-lto "
