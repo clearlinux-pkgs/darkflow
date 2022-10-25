@@ -4,7 +4,7 @@
 #
 Name     : darkflow
 Version  : eb7e830393f24233032b8578737141528be01d65
-Release  : 25
+Release  : 26
 URL      : https://github.com/thtrieu/darkflow/archive/eb7e830393f24233032b8578737141528be01d65.tar.gz
 Source0  : https://github.com/thtrieu/darkflow/archive/eb7e830393f24233032b8578737141528be01d65.tar.gz
 Summary  : No detailed summary available
