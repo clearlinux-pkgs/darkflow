@@ -4,13 +4,15 @@
 #
 Name     : darkflow
 Version  : eb7e830393f24233032b8578737141528be01d65
-Release  : 27
+Release  : 28
 URL      : https://github.com/thtrieu/darkflow/archive/eb7e830393f24233032b8578737141528be01d65.tar.gz
 Source0  : https://github.com/thtrieu/darkflow/archive/eb7e830393f24233032b8578737141528be01d65.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : GPL-3.0
 Requires: darkflow-bin = %{version}-%{release}
+Requires: darkflow-filemap = %{version}-%{release}
+Requires: darkflow-lib = %{version}-%{release}
 Requires: darkflow-license = %{version}-%{release}
 Requires: darkflow-python = %{version}-%{release}
 Requires: darkflow-python3 = %{version}-%{release}
@@ -26,9 +28,28 @@ BuildRequires : pypi-numpy
 Summary: bin components for the darkflow package.
 Group: Binaries
 Requires: darkflow-license = %{version}-%{release}
+Requires: darkflow-filemap = %{version}-%{release}
 
 %description bin
 bin components for the darkflow package.
+
+
+%package filemap
+Summary: filemap components for the darkflow package.
+Group: Default
+
+%description filemap
+filemap components for the darkflow package.
+
+
+%package lib
+Summary: lib components for the darkflow package.
+Group: Libraries
+Requires: darkflow-license = %{version}-%{release}
+Requires: darkflow-filemap = %{version}-%{release}
+
+%description lib
+lib components for the darkflow package.
 
 
 %package license
@@ -51,6 +72,7 @@ python components for the darkflow package.
 %package python3
 Summary: python3 components for the darkflow package.
 Group: Default
+Requires: darkflow-filemap = %{version}-%{release}
 Requires: python3-core
 
 %description python3
@@ -60,13 +82,16 @@ python3 components for the darkflow package.
 %prep
 %setup -q -n darkflow-eb7e830393f24233032b8578737141528be01d65
 cd %{_builddir}/darkflow-eb7e830393f24233032b8578737141528be01d65
+pushd ..
+cp -a darkflow-eb7e830393f24233032b8578737141528be01d65 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1650510687
+export SOURCE_DATE_EPOCH=1666720770
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$FFLAGS -fno-lto "
@@ -75,15 +100,33 @@ export CXXFLAGS="$CXXFLAGS -fno-lto "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 setup.py build
 
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
+python3 setup.py build
+
+popd
 %install
 export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/darkflow
-cp %{_builddir}/darkflow-eb7e830393f24233032b8578737141528be01d65/LICENSE %{buildroot}/usr/share/package-licenses/darkflow/12d81f50767d4e09aa7877da077ad9d1b915d75b
+cp %{_builddir}/darkflow-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/darkflow/12d81f50767d4e09aa7877da077ad9d1b915d75b || :
 python3 -tt setup.py build  install --root=%{buildroot}
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
 echo ----[ mark ]----
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3 "
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3 "
+python3 -tt setup.py build install --root=%{buildroot}-v3
+popd
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -91,6 +134,14 @@ echo ----[ mark ]----
 %files bin
 %defattr(-,root,root,-)
 /usr/bin/flow
+
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-darkflow
+
+%files lib
+%defattr(-,root,root,-)
+/usr/share/clear/optimized-elf/other*
 
 %files license
 %defattr(0644,root,root,0755)
